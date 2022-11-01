@@ -1,3 +1,4 @@
+using Ecommerce.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -8,6 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Ecommerce.Data.Services;
 
 namespace Ecommerce
 {
@@ -23,6 +26,15 @@ namespace Ecommerce
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // DbContext configuration
+            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnectionString")));
+
+            // Services configuration (Add by Ali 31/10/2022)
+            // called once per request within the scope
+            services.AddScoped<IActorService, ActorService>();
+
+
+
             services.AddControllersWithViews();
         }
 
@@ -52,6 +64,9 @@ namespace Ecommerce
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            // Seed Database
+            AppDbInitializercs.Seed(app);
         }
     }
 }
